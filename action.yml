@@ -2,9 +2,12 @@ name: 'Build, Test, and Publish Client Library'
 description: 'Builds the project'
 inputs:
   deploy-token:
-    description: 'The deploy token'
+    description: "The deploy token"
     required: true
-    default: ''
+  publish-client-library:
+    description: "Should it publish CL"
+    required: false
+    default: "true"
 runs:
   using: "composite"
   steps:
@@ -55,7 +58,7 @@ runs:
         cd src        
         dotnet pack Client/Client.csproj  -c Release -o ../nuget/ /p:IncludeSymbols=false
         cd ../nuget/
-        dotnet nuget push *.nupkg --source github --api-key $${{ inputs.deploy-token }} --skip-duplicate
+        dotnet nuget push *.nupkg --source github --api-key ${{ inputs.deploy-token }} --skip-duplicate
       shell: bash
     - uses: chrnorm/deployment-action@releases/v1
       name: Deploy
