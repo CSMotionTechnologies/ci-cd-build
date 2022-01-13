@@ -48,7 +48,6 @@ runs:
       name: Deploy
       if: |
          env.Environment != 'null'
-      id: deployment
       with:
         token: ${{ inputs.deploy-token }}
         environment: ${{env.Environment}}
