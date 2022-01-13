@@ -1,9 +1,6 @@
 name: 'Build, Test, and Publish Client Library'
 description: 'Builds the project'
 inputs:
-  client-library-name:
-    description: 'The client library name'
-    required: false
   deploy-token:
     description: 'The deploy token'
     required: true
@@ -56,7 +53,7 @@ runs:
           ${{ inputs.client-library-name }} != ''
       run: |  
         cd src        
-        dotnet pack Client/Client.csproj  -c Release -o ../nuget/ /p:IncludeSymbols=false -p:PackageVersion=${{ steps.gitversion.outputs.majorMinorPatch }}+${{ steps.gitversion.outputs.shortSha }}
+        dotnet pack Client/Client.csproj  -c Release -o ../nuget/ /p:IncludeSymbols=false
       shell: bash
     - name: Nuget Push
       if: |
@@ -65,7 +62,7 @@ runs:
       run: |  
         cd src
         cd ../nuget/
-        dotnet nuget push ${{inputs.client-library-name}}.${{ steps.gitversion.outputs.majorMinorPatch }}.nupkg --source github --api-key $${{ inputs.deploy-token }} --skip-duplicate
+        dotnet nuget push *.nupkg --source github --api-key $${{ inputs.deploy-token }} --skip-duplicate
       shell: bash
     - uses: chrnorm/deployment-action@releases/v1
       name: Deploy
