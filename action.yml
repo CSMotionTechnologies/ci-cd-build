@@ -47,10 +47,10 @@ runs:
     - uses: chrnorm/deployment-action@releases/v1
       name: Deploy
       if: |
-         env.Environment != 'null'
+         ${{ env.Environment }} != 'null'
       with:
         token: ${{ inputs.deploy-token }}
-        environment: ${{env.Environment}}
+        environment: ${{ env.Environment }}
         ref: ${{ github.ref }}
     - name: Nuget Pack and Push
       if: |
