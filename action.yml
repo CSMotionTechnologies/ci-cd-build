@@ -1,22 +1,13 @@
-name: 'Build'
+name: 'Build, Test, and Publish Client Library'
 description: 'Builds the project'
 inputs:
-  service-name:
-    description: 'The name of the service'
-    required: true
-    default: ''
   client-library-name:
     description: 'The client library name'
-    required: true
-    default: ''
+    required: false
   deploy-token:
     description: 'The deploy token'
     required: true
     default: ''
-outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-id }}
 runs:
   using: "composite"
   steps:
@@ -63,6 +54,30 @@ runs:
       name: Deploy
       if: |
          env.Environment != 'null'
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.7
+      with:
+        versionSpec: '5.x'
+    - name: Determine Version
+      id:   gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.7
+    - name: Nuget Pack
+      if: |
+          ${{ inputs.client-library-name }} != null &&
+          ${{ inputs.client-library-name }} != ''
+      run: |  
+        cd src        
+        dotnet pack Client/Client.csproj  -c Release -o ../nuget/ /p:IncludeSymbols=false -p:PackageVersion=${{ steps.gitversion.outputs.majorMinorPatch }}+${{ steps.gitversion.outputs.shortSha }}
+      shell: bash
+    - name: Nuget Push
+      if: |
+          ${{ inputs.client-library-name }} != null &&
+          ${{ inputs.client-library-name }} != ''
+      run: |  
+        cd src
+        cd ../nuget/
+        dotnet nuget push ${{inputs.client-library-name}}.${{ steps.gitversion.outputs.majorMinorPatch }}.nupkg --source github --api-key $${{ inputs.deploy-token }} --skip-duplicate
+      shell: bash
       id: deployment
       with:
         token: ${{ inputs.deploy-token }}
