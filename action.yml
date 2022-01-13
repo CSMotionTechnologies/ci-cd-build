@@ -9,6 +9,10 @@ inputs:
     description: 'The client library name'
     required: true
     default: ''
+  deploy-token:
+    description: 'The deploy token'
+    required: true
+    default: ''
 outputs:
   random-number:
     description: "Random number"
@@ -61,6 +65,6 @@ runs:
          env.Environment != 'null'
       id: deployment
       with:
-        token: ${{ secrets.DEPLOY_TOKEN }}
+        token: ${{ inputs.deploy-token }}
         environment: ${{env.Environment}}
         ref: ${{ github.ref }}
