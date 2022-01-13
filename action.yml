@@ -47,20 +47,13 @@ runs:
       run: |
         echo "Environment=Production" >> $GITHUB_ENV
       shell: bash
-    - name: Nuget Pack
+    - name: Nuget Pack and Push
       if: |
-          ${{ inputs.client-library-name }} != null &&
-          ${{ inputs.client-library-name }} != ''
+          ${{ inputs.publish-client-library }} != null &&
+          ${{ inputs.publish-client-library }} == 'true'
       run: |  
         cd src        
         dotnet pack Client/Client.csproj  -c Release -o ../nuget/ /p:IncludeSymbols=false
-      shell: bash
-    - name: Nuget Push
-      if: |
-          ${{ inputs.client-library-name }} != null &&
-          ${{ inputs.client-library-name }} != ''
-      run: |  
-        cd src
         cd ../nuget/
         dotnet nuget push *.nupkg --source github --api-key $${{ inputs.deploy-token }} --skip-duplicate
       shell: bash
