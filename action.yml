@@ -1,0 +1,66 @@
+name: 'Build'
+description: 'Builds the project'
+inputs:
+  service-name:
+    description: 'The name of the service'
+    required: true
+    default: ''
+  client-library-name:
+    description: 'The client library name'
+    required: true
+    default: ''
+outputs:
+  random-number:
+    description: "Random number"
+    value: ${{ steps.random-number-generator.outputs.random-id }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v1.7.2
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+    - uses: actions/checkout@v2
+    - name: Build and Test
+      run: |
+        cd src
+        dotnet restore 
+        dotnet build --configuration Release --no-restore
+        dotnet test UnitTests/UnitTests.csproj
+      shell: bash
+    - name: Deploy to Development?
+      if: |
+         github.ref == 'refs/heads/dev' ||
+         contains(github.ref, 'refs/heads/feature')
+      run: |
+        echo "Environment=Development" >> $GITHUB_ENV
+      shell: bash
+    - name: Deploy to Staging?
+      if: |
+         contains(github.ref, 'refs/heads/release')     
+      run: |
+         echo "Environment=Staging" >> $GITHUB_ENV            
+      shell: bash
+    - name: Deploy to Production?
+      if: |
+         contains(github.ref, 'refs/heads/release')     
+      run: |
+         echo "Environment=Staging" >> $GITHUB_ENV            
+      shell: bash
+    - name: Deploy to Production?
+      if: |
+         github.event.release.prerelease == false &&
+         github.event_name == 'release'
+      run: |
+        echo "Environment=Production" >> $GITHUB_ENV
+      shell: bash
+    - uses: chrnorm/deployment-action@releases/v1
+      name: Deploy
+      if: |
+         env.Environment != 'null'
+      id: deployment
+      with:
+        token: ${{ secrets.DEPLOY_TOKEN }}
+        environment: ${{env.Environment}}
+        ref: ${{ github.ref }}
