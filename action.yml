@@ -4,10 +4,6 @@ inputs:
   deploy-token:
     description: "The deploy token"
     required: true
-  publish-client-library:
-    description: "Should it publish CL"
-    required: false
-    default: "true"
 runs:
   using: "composite"
   steps:
@@ -52,12 +48,3 @@ runs:
         token: ${{ inputs.deploy-token }}
         environment: ${{ env.Environment }}
         ref: ${{ github.ref }}
-    - name: Nuget Pack and Push
-      if: |
-          ${{ inputs.publish-client-library }} == 'true'
-      run: |  
-        cd src        
-        dotnet pack Client/Client.csproj  -c Release -o ../nuget/ /p:IncludeSymbols=false
-        cd ../nuget/
-        dotnet nuget push *.nupkg --source github --api-key ${{ inputs.deploy-token }} --skip-duplicate
-      shell: bash
