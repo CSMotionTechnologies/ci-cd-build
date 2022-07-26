@@ -4,6 +4,9 @@ inputs:
   deploy-token:
     description: "The deploy token"
     required: true
+  deploy-to-environment:
+    description: "The environment to deploy to"
+    required: false
 runs:
   using: "composite"
   steps:
@@ -33,12 +36,10 @@ runs:
       run: |
          echo "Environment=stage" >> $GITHUB_ENV            
       shell: bash     
-    - name: Deploy to Production?
-      if: |
-         (github.event.release.prerelease == false &&
-         github.event_name == 'release') || (github.ref == 'refs/heads/master')
+    - name: Manual Deploy?
+      if: inputs.deploy-to-environment == 'dev' || inputs.deploy-to-environment == 'stage' || inputs.deploy-to-environment == 'prod'
       run: |
-        echo "Environment=prod" >> $GITHUB_ENV
+         echo "Environment=$inputs.deploy-to-environment" >> $GITHUB_ENV
       shell: bash
     - uses: chrnorm/deployment-action@releases/v1
       name: Deploy
