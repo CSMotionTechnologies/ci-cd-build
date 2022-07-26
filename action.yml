@@ -37,7 +37,7 @@ runs:
          echo "Environment=stage" >> $GITHUB_ENV            
       shell: bash     
     - name: Manual Deploy?
-      if: inputs.deploy-to-environment == 'dev' || inputs.deploy-to-environment == 'stage' || inputs.deploy-to-environment == 'prod'
+      if: (inputs.deploy-to-environment == 'dev' || inputs.deploy-to-environment == 'stage' || inputs.deploy-to-environment == 'prod')
       run: |
          echo "Environment=$inputs.deploy-to-environment" >> $GITHUB_ENV
       shell: bash
