@@ -35,15 +35,15 @@ runs:
       shell: bash     
     - name: Deploy to Production?
       if: |
-         github.event.release.prerelease == false &&
-         github.event_name == 'release'
+         (github.event.release.prerelease == false &&
+         github.event_name == 'release') || (github.ref == 'refs/heads/master')
       run: |
         echo "Environment=PROD" >> $GITHUB_ENV
       shell: bash
     - uses: chrnorm/deployment-action@releases/v1
       name: Deploy
       if: |
-         ${{ env.Environment }} != 'null'
+         ${{ (env.Environment == 'DEV' || env.Environment == 'STAGE' || env.Environment == 'PROD') }}
       with:
         token: ${{ inputs.deploy-token }}
         environment: ${{ env.Environment }}
