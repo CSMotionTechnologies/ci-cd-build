@@ -25,25 +25,25 @@ runs:
          github.ref == 'refs/heads/dev' ||
          contains(github.ref, 'refs/heads/feature')
       run: |
-        echo "Environment=DEV" >> $GITHUB_ENV
+        echo "Environment=dev" >> $GITHUB_ENV
       shell: bash
     - name: Deploy to Staging?
       if: |
          contains(github.ref, 'refs/heads/release')     
       run: |
-         echo "Environment=STAGE" >> $GITHUB_ENV            
+         echo "Environment=stage" >> $GITHUB_ENV            
       shell: bash     
     - name: Deploy to Production?
       if: |
          (github.event.release.prerelease == false &&
          github.event_name == 'release') || (github.ref == 'refs/heads/master')
       run: |
-        echo "Environment=PROD" >> $GITHUB_ENV
+        echo "Environment=prod" >> $GITHUB_ENV
       shell: bash
     - uses: chrnorm/deployment-action@releases/v1
       name: Deploy
       if: |
-         ${{ (env.Environment == 'DEV' || env.Environment == 'STAGE' || env.Environment == 'PROD') }}
+         ${{ (env.Environment == 'dev' || env.Environment == 'stage' || env.Environment == 'prod') }}
       with:
         token: ${{ inputs.deploy-token }}
         environment: ${{ env.Environment }}
