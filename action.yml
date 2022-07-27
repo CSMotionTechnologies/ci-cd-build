@@ -40,6 +40,7 @@ runs:
       if: (inputs.deploy-to-environment == 'dev' || inputs.deploy-to-environment == 'stage' || inputs.deploy-to-environment == 'prod')
       run: |
          echo Environment=${{inputs.deploy-to-environment}} >> $GITHUB_ENV
+      shell: bash
     - name: Prod?
       if: (inputs.deploy-to-environment == 'prod' && github.ref != 'refs/heads/master')
       run: |
