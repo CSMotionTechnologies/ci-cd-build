@@ -32,6 +32,7 @@ runs:
       shell: bash
     - name: Deploy to Staging?
       if: |
+         github.ref == 'refs/heads/stage' ||
          contains(github.ref, 'refs/heads/release')     
       run: |
          echo "Environment=stage" >> $GITHUB_ENV            
