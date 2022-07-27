@@ -39,12 +39,11 @@ runs:
     - name: Manual Deploy?
       if: (inputs.deploy-to-environment == 'dev' || inputs.deploy-to-environment == 'stage' || inputs.deploy-to-environment == 'prod')
       run: |
-         echo "Environment=$inputs.deploy-to-environment" >> $GITHUB_ENV
+         echo Environment=${{inputs.deploy-to-environment}} >> $GITHUB_ENV
       shell: bash
     - uses: chrnorm/deployment-action@releases/v1
       name: Deploy
-      if: |
-         ${{ (env.Environment == 'dev' || env.Environment == 'stage' || env.Environment == 'prod') }}
+      if: ${{ (env.Environment == 'dev' || env.Environment == 'stage' || env.Environment == 'prod') }}
       with:
         token: ${{ inputs.deploy-token }}
         environment: ${{ env.Environment }}
