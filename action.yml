@@ -20,6 +20,8 @@ runs:
       if: |
          contains(github.ref, 'refs/heads/feature')
       run: |
+        git config --global user.email "placie@cicd.com"
+        git config --global user.name "Placie"
         git pull --allow-unrelated-histories
         git merge origin/dev --allow-unrelated-histories
         cd src
