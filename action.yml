@@ -20,8 +20,8 @@ runs:
       if: |
          contains(github.ref, 'refs/heads/feature')
       run: |
-        git checkout dev
         git pull
+        git checkout dev
         git checkout ${{ github.ref_name }}
         git merge dev
         cd src
