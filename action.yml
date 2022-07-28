@@ -21,7 +21,7 @@ runs:
          contains(github.ref, 'refs/heads/feature')
       run: |
         git pull
-        git checkout ${github.ref_name}
+        git checkout ${{ github.ref_name }}
         git merge origin/dev
         cd src
         dotnet restore 
