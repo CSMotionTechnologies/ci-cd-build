@@ -16,23 +16,7 @@ runs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
     - uses: actions/checkout@v2
-    - name: Merge and then build and test
-      if: |
-         contains(github.ref, 'refs/heads/feature')
-      run: |
-        git config --global user.email "placie@cicd.com"
-        git config --global user.name "Placie"
-        git pull --allow-unrelated-histories
-        git merge origin/dev --allow-unrelated-histories
-        cd src
-        dotnet restore 
-        dotnet build --configuration Release --no-restore
-        dotnet test UnitTests/UnitTests.csproj
-      shell: bash
-    - uses: actions/checkout@v2
     - name: Build and Test
-      if: |
-         !contains(github.ref, 'refs/heads/feature')
       run: |
         cd src
         dotnet restore 
