@@ -15,7 +15,8 @@ runs:
       uses: actions/setup-dotnet@v1.7.2
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
-    - name: Merge dev into feature
+    - uses: actions/checkout@v2
+    - name: Merge and then build and test
       if: |
          contains(github.ref, 'refs/heads/feature')
       run: |
@@ -23,8 +24,15 @@ runs:
         git pull
         git checkout ${{ github.ref_name }}
         git merge dev
+        cd src
+        dotnet restore 
+        dotnet build --configuration Release --no-restore
+        dotnet test UnitTests/UnitTests.csproj
       shell: bash
+    - uses: actions/checkout@v2
     - name: Build and Test
+      if: |
+         !contains(github.ref, 'refs/heads/feature')
       run: |
         cd src
         dotnet restore 
