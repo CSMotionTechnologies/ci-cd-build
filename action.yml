@@ -19,6 +19,8 @@ runs:
       if: |
          contains(github.ref, 'refs/heads/feature')
       run: |
+        git config pull.ff only
+        git pull origin dev
         git merge dev
       shell: bash
     - name: Build and Test
