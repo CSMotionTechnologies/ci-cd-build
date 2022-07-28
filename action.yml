@@ -15,7 +15,6 @@ runs:
       uses: actions/setup-dotnet@v1.7.2
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
-    - uses: actions/checkout@v2
     - name: Merge dev into feature
       if: |
          contains(github.ref, 'refs/heads/feature')
