@@ -21,7 +21,7 @@ runs:
          contains(github.ref, 'refs/heads/feature')
       run: |
         git pull
-        git merge dev
+        git merge origin/dev
         cd src
         dotnet restore 
         dotnet build --configuration Release --no-restore
