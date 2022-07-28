@@ -16,6 +16,13 @@ runs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
     - uses: actions/checkout@v2
+    - name: Merge dev into feature
+      if: |
+         contains(github.ref, 'refs/heads/feature')
+      run: |
+        git pull origin dev
+        git merge dev
+      shell: bash
     - name: Build and Test
       run: |
         cd src
